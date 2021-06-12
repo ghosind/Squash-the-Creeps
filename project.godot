@@ -8,15 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[  ]
+_global_script_class_icons={
+}
+
 [application]
 
-config/name="Dodge the Creeps! 3D"
+config/name="Squash the Creeps (3D)"
 config/icon="res://icon.png"
-
-[physics]
-
-common/enable_pause_aware_picking=true
 
 [rendering]
 
-environment/default_environment="res://default_env.tres"
+quality/driver/driver_name="GLES2"
+quality/filters/msaa=3
