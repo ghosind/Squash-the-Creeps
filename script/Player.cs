@@ -36,7 +36,12 @@ public class Player : KinematicBody
         if (direction != Vector3.Zero)
         {
             direction = direction.Normalized();
-            GetNode<Spatial>("Pivot").LookAt(Transaltion)
+            GetNode<Spatial>("Pivot").LookAt(Translation + direction, Vector3.Up);
         }
+
+        _velocity.x = direction.x * Speed;
+        _velocity.z = direction.z * Speed;
+        _velocity.y -= FallAcceleration * delta;
+        _velocity = MoveAndSlide(_velocity, Vector3.Up);
     }
 }
