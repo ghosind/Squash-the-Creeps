@@ -3,13 +3,28 @@ using System;
 
 public class Player : KinematicBody
 {
+    [Signal]
+    public delegate void Hit();
+
     [Export]
     public int Speed = 14;
 
     [Export]
     public int FallAcceleration = 75;
 
+    [Export]
+    public int JumpImpulse = 20;
+
+    [Export]
+    public int BounceImpulse = 16;
+
     private Vector3 _velocity = Vector3.Zero;
+
+    private void Die()
+    {
+        EmitSignal(nameof(Hit));
+        QueueFree();
+    }
 
     public override void _PhysicsProcess(float delta)
     {
@@ -41,7 +56,31 @@ public class Player : KinematicBody
 
         _velocity.x = direction.x * Speed;
         _velocity.z = direction.z * Speed;
+
+        if (IsOnFloor() && Input.IsActionPressed("jump"))
+        {
+            _velocity.y += JumpImpulse;
+        }
+
         _velocity.y -= FallAcceleration * delta;
         _velocity = MoveAndSlide(_velocity, Vector3.Up);
+
+        for (int i = 0; i < GetSlideCount(); i++)
+        {
+            KinematicCollision collision = GetSlideCollision(i);
+            if (collision.Collider is Mob mob && mob.IsInGroup("mob"))
+            {
+                if (Vector3.Up.Dot(collision.Normal) > 0.1f)
+                {
+                    mob.Squash();
+                    _velocity.y = BounceImpulse;
+                }
+            }
+        }
+    }
+
+    public void OnMobDetectorBodyEntered(Node body)
+    {
+        Die();
     }
 }

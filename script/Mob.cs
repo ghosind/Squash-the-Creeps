@@ -3,6 +3,9 @@ using System;
 
 public class Mob : KinematicBody
 {
+    [Signal]
+    public delegate void Squashed();
+
     [Export]
     public int MinSpeed = 10;
 
@@ -25,6 +28,12 @@ public class Mob : KinematicBody
         float randomSpeed = (float)GD.RandRange(MinSpeed, MaxSpeed);
         _velocity = Vector3.Forward * randomSpeed;
         _velocity = _velocity.Rotated(Vector3.Up, Rotation.y);
+    }
+
+    public void Squash()
+    {
+        EmitSignal(nameof(Squashed));
+        QueueFree();
     }
 
     public void OnVisibilityNotifierScreenExited()
