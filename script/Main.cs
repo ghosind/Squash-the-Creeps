@@ -24,7 +24,6 @@ public class Main : Node
 
         AddChild(mob);
         mob.Initialize(mobSpawnLocation.Translation, playerPosition);
-
         mob.Connect(nameof(Mob.Squashed), GetNode<ScoreLabel>("UserInterface/ScoreLabel"), nameof(ScoreLabel.OnMobSquashed));
     }
 

@@ -52,6 +52,11 @@ public class Player : KinematicBody
         {
             direction = direction.Normalized();
             GetNode<Spatial>("Pivot").LookAt(Translation + direction, Vector3.Up);
+            GetNode<AnimationPlayer>("AnimationPlayer").PlaybackSpeed = 4;
+        }
+        else
+        {
+            GetNode<AnimationPlayer>("AnimationPlayer").PlaybackSpeed = 1;
         }
 
         _velocity.x = direction.x * Speed;
@@ -77,6 +82,9 @@ public class Player : KinematicBody
                 }
             }
         }
+
+        var pivot = GetNode<Spatial>("Pivot");
+        pivot.Rotation = new Vector3(Mathf.Pi / 6f * _velocity.y / JumpImpulse, pivot.Rotation.y, pivot.Rotation.z);
     }
 
     public void OnMobDetectorBodyEntered(Node body)

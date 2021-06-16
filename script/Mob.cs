@@ -28,6 +28,8 @@ public class Mob : KinematicBody
         float randomSpeed = (float)GD.RandRange(MinSpeed, MaxSpeed);
         _velocity = Vector3.Forward * randomSpeed;
         _velocity = _velocity.Rotated(Vector3.Up, Rotation.y);
+
+        GetNode<AnimationPlayer>("AnimationPlayer").PlaybackSpeed = randomSpeed / MinSpeed;
     }
 
     public void Squash()
