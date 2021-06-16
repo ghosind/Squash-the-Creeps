@@ -43,15 +43,13 @@ public class Main : Node
     private void StartGame()
     {
         GetNode<Control>("UserInterface/Retry").Hide();
-        GetNode<AudioStreamPlayer>("MusicPlayer").Play();
+        GetNode<MusicPlayer>("MusicPlayer").Play();
     }
 
     private void EndGame()
     {
         GetNode<Timer>("MobTimer").Stop();
         GetNode<Control>("UserInterface/Retry").Show();
-        GetNode<AudioStreamPlayer>("MusicPlayer").Stop();
-
-        GetNode<AudioStreamPlayer>("GameOverMusicPlayer").Play();
+        GetNode<MusicPlayer>("MusicPlayer").End();
     }
 }
