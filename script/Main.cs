@@ -10,7 +10,7 @@ public class Main : Node
     {
         GD.Randomize();
 
-        GetNode<Control>("UserInterface/Retry").Hide();
+        StartGame();
     }
 
     public void OnMobTimerTimeout()
@@ -29,9 +29,7 @@ public class Main : Node
 
     public void OnPlayerHit()
     {
-        GetNode<Timer>("MobTimer").Stop();
-
-        GetNode<Control>("UserInterface/Retry").Show();
+        EndGame();
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -40,5 +38,20 @@ public class Main : Node
         {
             GetTree().ReloadCurrentScene();
         }
+    }
+
+    private void StartGame()
+    {
+        GetNode<Control>("UserInterface/Retry").Hide();
+        GetNode<AudioStreamPlayer>("MusicPlayer").Play();
+    }
+
+    private void EndGame()
+    {
+        GetNode<Timer>("MobTimer").Stop();
+        GetNode<Control>("UserInterface/Retry").Show();
+        GetNode<AudioStreamPlayer>("MusicPlayer").Stop();
+
+        GetNode<AudioStreamPlayer>("GameOverMusicPlayer").Play();
     }
 }
