@@ -7,6 +7,8 @@ public class Main : Node
 
     private Timer timer;
 
+    private HighestScoreLabel highestScoreLabel;
+
     private ScoreLabel scoreLabel;
 
     private Control retryControl;
@@ -23,6 +25,7 @@ public class Main : Node
         retryControl = GetNode<Control>("UserInterface/Retry");
         player = GetNode<Player>("Player");
         scoreLabel = GetNode<ScoreLabel>("UserInterface/ScoreLabel");
+        highestScoreLabel = GetNode<HighestScoreLabel>("UserInterface/HighestScoreLabel");
 
         GD.Randomize();
 
@@ -70,6 +73,8 @@ public class Main : Node
 
     private void EndGame()
     {
+        highestScoreLabel.SetScore(scoreLabel.Score);
+
         timer.Stop();
         retryControl.Show();
         musicPlayer.End();

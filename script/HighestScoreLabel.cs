@@ -3,11 +3,24 @@ using System;
 
 public class HighestScoreLabel : Label
 {
-    public int HighestScore { get; private set; } = 0;
+    private int _highestScore = 0;
 
-    public void SetHighestScore(int score)
+    public int HighestScore
     {
-        HighestScore = score;
-        Text = string.Format("Highest Score: {0}", HighestScore);
+        get => _highestScore;
+        private set
+        {
+
+            _highestScore = value;
+            Text = string.Format("Highest Score: {0}", _highestScore);
+        }
+    }
+
+    public void SetScore(int score)
+    {
+        if (score > HighestScore)
+        {
+            HighestScore = score;
+        }
     }
 }
