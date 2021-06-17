@@ -23,12 +23,14 @@ public class Player : KinematicBody
     private void Die()
     {
         EmitSignal(nameof(Hit));
-        QueueFree();
+        Hide();
     }
 
     public override void _PhysicsProcess(float delta)
     {
         var direction = Vector3.Zero;
+        var pivot = GetNode<Spatial>("Pivot");
+        var animation = GetNode<AnimationPlayer>("AnimationPlayer");
 
         if (Input.IsActionPressed("move_right"))
         {
@@ -51,12 +53,12 @@ public class Player : KinematicBody
         if (direction != Vector3.Zero)
         {
             direction = direction.Normalized();
-            GetNode<Spatial>("Pivot").LookAt(Translation + direction, Vector3.Up);
-            GetNode<AnimationPlayer>("AnimationPlayer").PlaybackSpeed = 4;
+            pivot.LookAt(Translation + direction, Vector3.Up);
+            animation.PlaybackSpeed = 4;
         }
         else
         {
-            GetNode<AnimationPlayer>("AnimationPlayer").PlaybackSpeed = 1;
+            animation.PlaybackSpeed = 1;
         }
 
         _velocity.x = direction.x * Speed;
@@ -83,7 +85,6 @@ public class Player : KinematicBody
             }
         }
 
-        var pivot = GetNode<Spatial>("Pivot");
         pivot.Rotation = new Vector3(Mathf.Pi / 6f * _velocity.y / JumpImpulse, pivot.Rotation.y, pivot.Rotation.z);
     }
 

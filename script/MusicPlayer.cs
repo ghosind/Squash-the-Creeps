@@ -3,14 +3,26 @@ using System;
 
 public class MusicPlayer : Node
 {
+    private AudioStreamPlayer musicPlayer;
+
+    private AudioStreamPlayer gameoverPlayer;
+
+    public override void _Ready()
+    {
+        base._Ready();
+
+        musicPlayer = GetNode<AudioStreamPlayer>("MusicPlayer");
+        gameoverPlayer = GetNode<AudioStreamPlayer>("GameoverMusicPlayer");
+    }
+
     public void Play()
     {
-        GetNode<AudioStreamPlayer>("MusicPlayer").Play();
+        musicPlayer?.Play();
     }
 
     public void End()
     {
-        GetNode<AudioStreamPlayer>("MusicPlayer").Stop();
-        GetNode<AudioStreamPlayer>("GameoverMusicPlayer").Play();
+        musicPlayer?.Stop();
+        gameoverPlayer?.Play();
     }
 }

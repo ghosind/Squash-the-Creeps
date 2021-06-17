@@ -3,11 +3,27 @@ using System;
 
 public class Main : Node
 {
+    private MusicPlayer musicPlayer;
+
+    private Timer timer;
+
+    private ScoreLabel scoreLabel;
+
+    private Control retryControl;
+
+    private Player player;
+
     [Export]
     public PackedScene MobScene;
 
     public override void _Ready()
     {
+        musicPlayer = GetNode<MusicPlayer>("MusicPlayer");
+        timer = GetNode<Timer>("MobTimer");
+        retryControl = GetNode<Control>("UserInterface/Retry");
+        player = GetNode<Player>("Player");
+        scoreLabel = GetNode<ScoreLabel>("UserInterface/ScoreLabel");
+
         GD.Randomize();
 
         StartGame();
@@ -16,15 +32,16 @@ public class Main : Node
     public void OnMobTimerTimeout()
     {
         Mob mob = MobScene.Instance<Mob>();
+        mob.AddToGroup("mobs");
 
         var mobSpawnLocation = GetNode<PathFollow>("SpawnPath/SpawnLocation");
         mobSpawnLocation.UnitOffset = GD.Randf();
 
-        Vector3 playerPosition = GetNode<Player>("Player").Transform.origin;
+        Vector3 playerPosition = player.Transform.origin;
 
         AddChild(mob);
         mob.Initialize(mobSpawnLocation.Translation, playerPosition);
-        mob.Connect(nameof(Mob.Squashed), GetNode<ScoreLabel>("UserInterface/ScoreLabel"), nameof(ScoreLabel.OnMobSquashed));
+        mob.Connect(nameof(Mob.Squashed), scoreLabel, nameof(ScoreLabel.OnMobSquashed));
     }
 
     public void OnPlayerHit()
@@ -34,22 +51,29 @@ public class Main : Node
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event.IsActionPressed("ui_accept") && GetNode<Control>("UserInterface/Retry").Visible)
+        if (@event.IsActionPressed("ui_accept") && retryControl.Visible)
         {
-            GetTree().ReloadCurrentScene();
+            StartGame();
         }
     }
 
     private void StartGame()
     {
-        GetNode<Control>("UserInterface/Retry").Hide();
-        GetNode<MusicPlayer>("MusicPlayer").Play();
+        player.Translation = Vector3.Zero;
+        player.Show();
+
+        scoreLabel.Clear();
+        retryControl.Hide();
+        musicPlayer.Play();
+        timer.Start();
     }
 
     private void EndGame()
     {
-        GetNode<Timer>("MobTimer").Stop();
-        GetNode<Control>("UserInterface/Retry").Show();
-        GetNode<MusicPlayer>("MusicPlayer").End();
+        timer.Stop();
+        retryControl.Show();
+        musicPlayer.End();
+
+        GetTree().CallGroup("mobs", "queue_free");
     }
 }

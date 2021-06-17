@@ -3,11 +3,24 @@ using System;
 
 public class ScoreLabel : Label
 {
-    public int Score { get; private set; } = 0;
+    private int _score = 0;
+
+    public int Score {
+        get => _score;
+        private set
+        {
+            _score = value;
+            Text = string.Format("Score: {0}", _score);
+        }
+    }
 
     public void OnMobSquashed()
     {
         Score += 1;
-        Text = string.Format("Score: {0}", Score);
+    }
+
+    public void Clear()
+    {
+        Score = 0;
     }
 }
