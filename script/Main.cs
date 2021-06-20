@@ -3,6 +3,8 @@ using System;
 
 public class Main : Node
 {
+    private static string SAVE_FILE_PATH = "user://save_game.dat";
+
     private MusicPlayer musicPlayer;
 
     private Timer timer;
@@ -28,6 +30,8 @@ public class Main : Node
         highestScoreLabel = GetNode<HighestScoreLabel>("UserInterface/HighestScoreLabel");
 
         GD.Randomize();
+
+        LoadGame();
 
         StartGame();
     }
@@ -74,11 +78,37 @@ public class Main : Node
     private void EndGame()
     {
         highestScoreLabel.SetScore(scoreLabel.Score);
+        SaveGame();
 
         timer.Stop();
         retryControl.Show();
         musicPlayer.End();
 
         GetTree().CallGroup("mobs", "queue_free");
+    }
+
+    private void SaveGame()
+    {
+        var saveGame = new File();
+        saveGame.Open(SAVE_FILE_PATH, File.ModeFlags.Write);
+
+        saveGame.Store32((uint) highestScoreLabel.HighestScore);
+
+        saveGame.Close();
+    }
+
+    private void LoadGame()
+    {
+        var saveGame = new File();
+        if (!saveGame.FileExists(SAVE_FILE_PATH))
+        {
+            return;
+        }
+
+        saveGame.Open(SAVE_FILE_PATH, File.ModeFlags.Read);
+
+        highestScoreLabel.SetScore((int) saveGame.Get32());
+
+        saveGame.Close();
     }
 }
